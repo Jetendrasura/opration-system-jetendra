@@ -1,0 +1,68 @@
+#include <stdio.h>
+
+// Process structure
+typedef struct {
+    int process_id; // Process ID
+    int arrival_time; // Arrival time of process
+    int burst_time; // Burst time of process
+    int completion_time; // Completion time of process
+} Process;
+
+// Function to perform Shortest Job First (SJF) scheduling
+void sjf(Process processes[], int n) {
+    int time = 0; // Current time
+    int total_completion_time = 0; // Total completion time
+    int smallest_burst_index; // Index of process with smallest burst time
+
+    // Continue until all processes are executed
+    while (total_completion_time < n) {
+        int min_burst = __INT_MAX__; // Initialize minimum burst time
+
+        // Find the process with the smallest burst time
+        for (int i = 0; i < n; i++) {
+            // Check if process has arrived and its burst time is smaller than min_burst
+            if (processes[i].arrival_time <= time && processes[i].burst_time < min_burst && processes[i].completion_time == 0) {
+                min_burst = processes[i].burst_time;
+                smallest_burst_index = i;
+            }
+        }
+
+        // Execute the process with the smallest burst time
+        time += processes[smallest_burst_index].burst_time;
+        processes[smallest_burst_index].completion_time =
+        time;
+        total_completion_time++;
+
+        // Print completion time of the executed process
+        printf("Process %d completed at time %d\n", processes[smallest_burst_index].process_id, time);
+    }
+
+    // Calculate and print average turnaround time
+    float avg_turnaround_time = 0;
+    for (int i = 0; i < n; i++) {
+        avg_turnaround_time += processes[i].completion_time - processes[i].arrival_time;
+    }
+    avg_turnaround_time /= n;
+    printf("Average Turnaround Time: %.2f\n", avg_turnaround_time);
+}
+
+int main() {
+    int n; // Number of processes
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    Process processes[n]; // Array of processes
+
+    // Input details of each process
+    for (int i = 0; i < n; i++) {
+        printf("Enter arrival time and burst time for process %d: ", i + 1);
+        scanf("%d %d", &processes[i].arrival_time, &processes[i].burst_time);
+        processes[i].process_id = i + 1;
+        processes[i].completion_time = 0;
+    }
+
+    // Perform SJF scheduling
+    sjf(processes, n);
+
+    return 0;
+}
